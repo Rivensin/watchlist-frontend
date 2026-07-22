@@ -1,0 +1,7 @@
+login()
+
+register()
+
+logout()
+
+getProfile()
