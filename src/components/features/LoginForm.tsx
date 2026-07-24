@@ -12,8 +12,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -30,7 +35,8 @@ export default function LoginForm() {
         description: "Welcome to Watchlist",
       })
 
-      reset()
+      router.push('/')
+
     } catch (error) {
       if(axios.isAxiosError(error)){
         toast.error("Login failed", {
@@ -42,13 +48,12 @@ export default function LoginForm() {
     }
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-
   return (
     <Card className="w-full max-w-107.5 shadow-xl">
       <CardHeader className="space-y-4">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
-          <Film className="h-7 w-7" />
+        <Link href='/' className="hover:underline hover:text-blue-400 text-right">Back to Watchlist</Link>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full relative">
+          <Image src='/icon.png' fill alt='watchlist icon' className="object-contain" />
         </div>
 
         <div className="space-y-1 text-center">

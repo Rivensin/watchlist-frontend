@@ -4,17 +4,17 @@ import { Button } from '../ui/button'
 import { MovieProps } from '@/app/types/movie'
 import Image from 'next/image'
 
-function MovieCard({ title, overview, genres, releaseYear, posterUrl } : MovieProps) {
+function MovieCard({ title, overview, genres, releaseYear, posterUrl, creator } : MovieProps) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">          
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-135">          
       <CardContent className="space-y-3 p-4">
         <div>
-          <div className='relative w-full h-40'> 
+          <div className='relative w-full h-72'> 
             <Image 
               src={posterUrl} 
               alt={title} 
               fill
-              sizes='100vw'
+              sizes='50vw'
               className="object-cover" 
             />
           </div>
@@ -40,6 +40,11 @@ function MovieCard({ title, overview, genres, releaseYear, posterUrl } : MoviePr
         <h4 className="font-semibold">
           {overview}
         </h4>
+
+        <h1 className="font-semibold text-gray-500">
+          Added by : {creator.name}
+        </h1>
+
       </CardContent>
     </Card>
   )

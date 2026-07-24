@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterSchema } from "@/lib/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 
 export default function RegisterForm() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
@@ -47,8 +48,9 @@ export default function RegisterForm() {
   return (
     <Card className="w-full max-w-107.5 shadow-xl">
       <CardHeader className="space-y-4">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
-          <Film className="h-7 w-7" />
+        <Link href='/' className="hover:underline hover:text-blue-400 text-right">Back to Watchlist</Link>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full relative">
+          <Image src='/icon.png' fill alt='watchlist icon' className="object-contain" />
         </div>
 
         <div className="space-y-1 text-center">
