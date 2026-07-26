@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 function MovieCard({ title, overview, genres, releaseYear, posterUrl, creator } : MovieProps) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-135">          
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow py-0">          
       <CardContent className="space-y-3 p-4">
         <div>
           <div className='relative w-full h-72'> 
@@ -37,7 +37,7 @@ function MovieCard({ title, overview, genres, releaseYear, posterUrl, creator } 
           </Button>
         </div>
 
-        <h4 className="font-semibold">
+        <h4 className="font-semibold h-16">
           {overview}
         </h4>
 

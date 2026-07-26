@@ -2,10 +2,10 @@ export type MovieProps = {
   id?: string
   title: string
   overview: string
-  genres: string[]
   releaseYear: number
+  genres: string[]
   posterUrl: string
-  creator: {
+  creator?: {
     id: string
     name: string
   }
