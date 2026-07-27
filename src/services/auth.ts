@@ -1,7 +1,0 @@
-login()
-
-register()
-
-logout()
-
-getProfile()

@@ -5,52 +5,55 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import MovieCard from "@/components/shared/MovieCard"
 import { MovieProps } from "@/app/types/movie"
-import { User } from '@/app/types/user'
+import { User } from "@/app/types/user"
 import { Button } from "@/components/ui/button"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 export default function Movies() {
-  const [movie,setMovie] = useState<MovieProps[] | null>(null)
-  const [profile,setProfile] = useState<User | null> (null)
+  const { data: movies, isLoading, error } = useQuery<MovieProps[]>({
+    queryKey: ["movies"],
+    queryFn: async () => {
+      const response = await api.get("/movies");
+      
+      return response.data;
+    },
+  });
+
+  const { data: profile } = useQuery<User>({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const response = await api.get("/auth/profile");
+      return response.data;
+    },
+  });
+
   const [search, setSearch] = useState<string>('')
 
-  const filterMovie = (title : string) => {
-    return movie?.filter(m => m.title.toLowerCase().includes(title.toLowerCase()))
-  } 
+  const filterMovie = useMemo(() => {
+    return movies?.filter((movie: MovieProps) =>
+      movie.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [movies, search]);
+
+  //Logout
+  const queryClient = useQueryClient();
 
   const logout = async() => {
-    try {
-      await api.post('/auth/logout')
-      setProfile(null)
-    } catch (error) {
-      console.error('Error logging out:', error)
-    }
+    await api.post("/auth/logout");
+
+    queryClient.removeQueries({
+      queryKey: ["profile"],
+    });
   }
 
-  useEffect(() => {
-    const fetchMovie = async() => {
-      try {
-        const response = await api.get('/movies')       
-        
-        setMovie(response.data)
-      } catch (error) {
-        console.error('Error fetching movie:', error)
-      }
-    }
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-    const getProfile = async() => {
-      try {
-        const response = await api.get('/auth/profile')
-        console.log(response.data)
-        setProfile(response.data)
-
-      } catch (error) {
-        console.error('Error fetching profile:', error)
-      }
-    }
-
-    getProfile()
-    fetchMovie()
-  },[])
+  if (error) {
+    return <p>Something went wrong.</p>;
+  }
 
   return (
     <main className="container mx-auto py-10">
@@ -96,7 +99,7 @@ export default function Movies() {
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        {filterMovie(search)?.map(movie => (
+        {filterMovie?.map((movie : MovieProps) => (
           <div key={movie.id}>
             <MovieCard
               title={movie.title}

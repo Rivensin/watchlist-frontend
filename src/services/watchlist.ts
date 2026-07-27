@@ -1,5 +1,0 @@
-getWatchlist()
-
-addToWatchlist()
-
-removeFromWatchlist()

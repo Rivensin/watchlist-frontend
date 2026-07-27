@@ -1,6 +1,4 @@
 'use client'
-import React from 'react'
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modals from '@/components/shared/Modals';
 import { CardContent } from '@/components/ui/card';
@@ -8,17 +6,18 @@ import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { MovieProps } from '@/app/types/movie';
 import { MovieFormData, MovieSchema } from '@/lib/validators/movie';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
 
 function AddMovie() {
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
     resolver: zodResolver(MovieSchema),
     defaultValues: {
       title: "",
@@ -29,42 +28,70 @@ function AddMovie() {
     },
   });
 
-  // Add Product Tab
-  
+  const overview = watch("overview")
+
+  const queryClient = useQueryClient();
+
   const router = useRouter()
 
-  const handleClose = () => {
-    
-  }
+  const addMovieMutation = useMutation({
+    mutationFn: async (data: MovieFormData) => {
+      const response = await api.post("/movies/addMovie", data);
 
-  const onSubmit = async (data : MovieProps) => {
-    try {
-      const response = await api.post("/auth/register", data);
+      return response.data;
+    },
 
-      toast.success("Account created successfully!", {
-        description: "Welcome to Watchlist",
-      })
+    onSuccess: () => {
+      toast.success("Movie added!");
+
+      queryClient.invalidateQueries({
+        queryKey: ["movies"],
+      });
 
       reset()
-    } catch (error) {
-      if(axios.isAxiosError(error)){
-        toast.error("Registration failed", {
-          description: error.response?.data?.error || "Something went wrong",
-        })
+
+      router.back();
+    },
+
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error ?? "Failed to add movie");
       } else {
-        toast.error('something went wrong')
+        toast.error("Something went wrong");
       }
-    }
+    },
+  });
+
+  const onSubmit = (data: MovieFormData) => {
+    addMovieMutation.mutate(data);
   };
+
+  // const onSubmit = async (data : MovieFormData) => {
+  //   try {
+  //     const response = await api.post("/movies/addMovie", data);
+
+  //     toast.success("Movie added successfully!")
+  //     router.back()
+
+  //   } catch (error) {
+  //     if(axios.isAxiosError(error)){
+  //       toast.error("Adding movie failed", {
+  //         description: error.response?.data?.error || "Something went wrong",
+  //       })
+  //     } else {
+  //       toast.error('something went wrong')
+  //     }
+  //   }
+  // };
 
   return (
     <Modals>
       <div        
-        className='bg-white w-[624px] px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-10'>  
+        className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-10'>  
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-32'>
           <div>Add Movie</div>
-          <button onClick={handleClose}>
-            <div className='hover:border-b hover:border-gray-500 h-[38px]'>Close</div>
+          <button onClick={() => router.back()}>
+            <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
         </div>
 
@@ -78,7 +105,7 @@ function AddMovie() {
             <Input
               {...register("title")}
               id="title"
-              placeholder=""
+              className='font-serif'
             />
 
             {errors.title && (
@@ -87,14 +114,16 @@ function AddMovie() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="overview" className='text-xl tracking-wide'>
-              Overview
+            <Label htmlFor="overview" className='text-2xl tracking-wide'>
+              Overview <span className={` ${overview?.length === 120 || overview?.length < 1 ? 'text-red-300' : 'text-green-300'} `}>{overview?.length ?? 0} / 120 </span>
             </Label>
 
-            <Input
+            <Textarea
               {...register("overview")}
               id="overview"
-              placeholder=""
+              rows={5}
+              className='font-serif'
+              maxLength={120}
             />
 
             {errors.overview && (
@@ -103,7 +132,7 @@ function AddMovie() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="releaseYear" className='text-xl tracking-wide'>
+            <Label htmlFor="releaseYear" className='text-2xl tracking-wide'>
               Release Year
             </Label>
 
@@ -112,7 +141,6 @@ function AddMovie() {
                 valueAsNumber: true
               })}
               id="releaseYear"
-              placeholder=""
               type='number'
             />
 
@@ -122,14 +150,14 @@ function AddMovie() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="genres" className='text-xl tracking-wide'>
+            <Label htmlFor="genres" className='text-2xl tracking-wide'>
               Genres
             </Label>
 
-            <div className='grid grid-cols-4 gap-2'>
+            <div className='grid grid-cols-3 gap-2'>
               {genres.map(genre => (
-                <>
-                  <Label key={genre} htmlFor="genres" className='flex items-center gap-2'>
+                <div key={genre} className='flex'>
+                  <Label htmlFor="genres" className='w-15'>
                     {genre}
                   </Label>
                   
@@ -138,8 +166,9 @@ function AddMovie() {
                     id="genres"
                     value={genre}
                     type='checkbox'
+                    className='w-22.5'
                   />    
-                </>            
+                </div>            
               ))}
               
             </div>
@@ -150,14 +179,13 @@ function AddMovie() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="posterUrl" className='text-xl tracking-wide'>
-              Cover URL
+            <Label htmlFor="posterUrl" className='text-2xl tracking-wide'>
+              Cover URL <span className='text-sm'> <span className='text-red-300'>*</span>Please provide amazon prime link </span>
             </Label>
 
             <Input
               {...register("posterUrl")}
               id="posterUrl"
-              placeholder=""
             />
 
             {errors.posterUrl && (
@@ -168,9 +196,9 @@ function AddMovie() {
           <Button
             className="w-full"
             type="submit"
-            disabled={isSubmitting}
+            disabled={addMovieMutation.isPending}
           >
-            Create
+            {addMovieMutation.isPending ? "Creating..." : "Create"}
           </Button>
         </form>
       </CardContent>
