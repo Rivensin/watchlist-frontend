@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Modals from '@/components/shared/Modals';
 import { CardContent } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
@@ -13,22 +13,34 @@ import axios from 'axios';
 import { MovieFormData, MovieSchema } from '@/lib/validators/movie';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from 'react';
 
 const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
 
-function AddMovie() {
+function EditMovieUser() {
+  const params = useParams()
   const router = useRouter()
 
   const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
     resolver: zodResolver(MovieSchema),
     defaultValues: {
-      title: "",
+      title: '',
       overview: "",
       releaseYear: new Date().getFullYear(),
       genres: [],
       posterUrl: "",
     },
   });
+
+  useEffect(() => {
+    const MoviebyId = async() => {
+      const response =  await api.get(`movies/${params.id}`)
+
+      reset(response.data)
+    }
+
+    if(params.id) MoviebyId()
+  },[params.id,reset])
 
   const overview = watch("overview")
 
@@ -71,7 +83,7 @@ function AddMovie() {
       <div        
         className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-11'>  
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
-          <div>Add Movie</div>
+          <div>Edits Movie</div>
           <button onClick={() => router.back()}>
             <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
@@ -191,4 +203,4 @@ function AddMovie() {
   )
 }
 
-export default AddMovie
+export default EditMovieUser

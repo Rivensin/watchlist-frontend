@@ -6,12 +6,12 @@ import { useState } from "react"
 import { MovieProps } from "@/app/types/movie"
 import { Button } from "@/components/ui/button"
 import { useMemo } from "react"
-import useLogout from "@/hooks/useLogout"
+import useMovieUser from "@/hooks/useMovieUser"
 import useProfile from "@/hooks/useProfile"
-import useMovie from "@/hooks/useMovie"
+import useLogout from "@/hooks/useLogout"
 
-export default function Movies() {
-  const { data: movies, isLoading, error } = useMovie()
+export default function MoviesUser() {
+  const { data: movies, isLoading, error } = useMovieUser()
 
   const { data: profile } = useProfile()
 
@@ -39,21 +39,17 @@ export default function Movies() {
           Movie List
         </h1>
         <div className="flex items-center justify-between mb-1">
-          {profile && (
-            <div className="flex gap-6">
-            <Link href='/addMovie' className='cursor-pointer'>
-              <Button size="sm" className="text-lg p-4">
-                Add Movie
-              </Button>
-            </Link>
-
-            <Link href='/movie' className='cursor-pointer'>
-              <Button size="sm" className="text-lg p-4 bg-orange-400">
-                My Movie List
-              </Button>
-            </Link>
-            </div>
-          )}    
+          <div>
+            {profile && (
+              <>
+              <Link href='/' className='cursor-pointer'>
+                <Button size="sm" className="text-lg p-4 bg-orange-400">
+                  Movie
+                </Button>
+              </Link>
+              </>
+            )}            
+          </div>
 
           <div className="flex items-center gap-10"> 
             <Input

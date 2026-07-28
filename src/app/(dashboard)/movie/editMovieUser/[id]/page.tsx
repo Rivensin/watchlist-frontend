@@ -16,7 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
 
-function AddMovie() {
+function EditMovieUser() {
   const router = useRouter()
 
   const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
@@ -71,7 +71,7 @@ function AddMovie() {
       <div        
         className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-11'>  
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
-          <div>Add Movie</div>
+          <div>Edit Movie</div>
           <button onClick={() => router.back()}>
             <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
@@ -191,4 +191,4 @@ function AddMovie() {
   )
 }
 
-export default AddMovie
+export default EditMovieUser

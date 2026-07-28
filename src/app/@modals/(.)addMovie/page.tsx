@@ -17,6 +17,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
 
 function AddMovie() {
+  const router = useRouter()
+
   const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
     resolver: zodResolver(MovieSchema),
     defaultValues: {
@@ -32,13 +34,11 @@ function AddMovie() {
 
   const queryClient = useQueryClient();
 
-  const router = useRouter()
-
   const addMovieMutation = useMutation({
     mutationFn: async (data: MovieFormData) => {
-      const response = await api.post("/movies/addMovie", data);
+    const response = await api.post("/movies/addMovie", data);
 
-      return response.data;
+    return response.data;
     },
 
     onSuccess: () => {
@@ -66,29 +66,11 @@ function AddMovie() {
     addMovieMutation.mutate(data);
   };
 
-  // const onSubmit = async (data : MovieFormData) => {
-  //   try {
-  //     const response = await api.post("/movies/addMovie", data);
-
-  //     toast.success("Movie added successfully!")
-  //     router.back()
-
-  //   } catch (error) {
-  //     if(axios.isAxiosError(error)){
-  //       toast.error("Adding movie failed", {
-  //         description: error.response?.data?.error || "Something went wrong",
-  //       })
-  //     } else {
-  //       toast.error('something went wrong')
-  //     }
-  //   }
-  // };
-
   return (
     <Modals>
       <div        
-        className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-10'>  
-        <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-32'>
+        className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-11'>  
+        <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
           <div>Add Movie</div>
           <button onClick={() => router.back()}>
             <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
@@ -115,15 +97,15 @@ function AddMovie() {
 
           <div className="space-y-2">
             <Label htmlFor="overview" className='text-2xl tracking-wide'>
-              Overview <span className={` ${overview?.length === 120 || overview?.length < 1 ? 'text-red-300' : 'text-green-300'} `}>{overview?.length ?? 0} / 120 </span>
+              Overview <span className={` ${overview?.length === 500 || overview?.length < 1 ? 'text-red-300' : 'text-green-300'} `}>{overview?.length ?? 0} / 500 </span>
             </Label>
 
             <Textarea
               {...register("overview")}
               id="overview"
-              rows={5}
-              className='font-serif'
-              maxLength={120}
+              rows={10}
+              className='font-serif overflow-y-auto h-32'
+              maxLength={500}
             />
 
             {errors.overview && (
@@ -186,6 +168,7 @@ function AddMovie() {
             <Input
               {...register("posterUrl")}
               id="posterUrl"
+              placeholder='Should be start with https://m.media-amazon.com/'
             />
 
             {errors.posterUrl && (
@@ -194,7 +177,7 @@ function AddMovie() {
           </div>
 
           <Button
-            className="w-full"
+            className="w-full py-6 mt-5"
             type="submit"
             disabled={addMovieMutation.isPending}
           >
