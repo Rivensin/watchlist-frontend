@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Modals from '@/components/shared/Modals';
 import { CardContent } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
@@ -13,16 +13,18 @@ import axios from 'axios';
 import { MovieFormData, MovieSchema } from '@/lib/validators/movie';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from 'react';
 
 const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
 
 function EditMovieUser() {
+  const params = useParams()
   const router = useRouter()
 
   const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
     resolver: zodResolver(MovieSchema),
     defaultValues: {
-      title: "",
+      title: '',
       overview: "",
       releaseYear: new Date().getFullYear(),
       genres: [],
@@ -30,32 +32,45 @@ function EditMovieUser() {
     },
   });
 
+  useEffect(() => {
+    const MoviebyId = async() => {
+      const response =  await api.get(`movies/${params.id}`)      
+      reset(response.data)
+    }
+
+    
+
+    if(params.id) MoviebyId()
+  },[params.id,reset])
+
   const overview = watch("overview")
 
   const queryClient = useQueryClient();
 
-  const addMovieMutation = useMutation({
+  const editMovieMutation = useMutation({
     mutationFn: async (data: MovieFormData) => {
-    const response = await api.post("/movies/addMovie", data);
+      const response = await api.put(`/movies/${params.id}`, data);
 
-    return response.data;
+      return response.data
     },
 
-    onSuccess: () => {
-      toast.success("Movie added!");
+    onSuccess: async() => {
+      toast.success("Movie edited!");
 
-      queryClient.invalidateQueries({
-        queryKey: ["movies"],
+      await queryClient.invalidateQueries({
+        queryKey: ["moviesUser"],
       });
 
-      reset()
+      await queryClient.invalidateQueries({
+        queryKey: ["movies"],
+      });
 
       router.back();
     },
 
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error ?? "Failed to add movie");
+        toast.error(error.response?.data?.error ?? "Failed to edit movie");
       } else {
         toast.error("Something went wrong");
       }
@@ -63,7 +78,7 @@ function EditMovieUser() {
   });
 
   const onSubmit = (data: MovieFormData) => {
-    addMovieMutation.mutate(data);
+    editMovieMutation.mutate(data);
   };
 
   return (
@@ -73,7 +88,7 @@ function EditMovieUser() {
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
           <div>Edit Movie</div>
           <button onClick={() => router.back()}>
-            <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
+            <div className='hover:text-red-500 hover:border-b hover:border-red-500 h-9.5'>Close</div>
           </button>
         </div>
 
@@ -179,9 +194,9 @@ function EditMovieUser() {
           <Button
             className="w-full py-6 mt-5"
             type="submit"
-            disabled={addMovieMutation.isPending}
+            disabled={editMovieMutation.isPending}
           >
-            {addMovieMutation.isPending ? "Creating..." : "Create"}
+            {editMovieMutation.isPending ? "Editing..." : "Edit"}
           </Button>
         </form>
       </CardContent>

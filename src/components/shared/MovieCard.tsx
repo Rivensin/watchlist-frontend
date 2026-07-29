@@ -10,7 +10,7 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
   const pathname = usePathname()
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow py-0">          
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow py-0 h-132">          
       <CardContent className="space-y-3 p-4">
         <div>
           <div className='relative w-full h-72'> 
@@ -38,14 +38,14 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
           </span>
 
           {pathname.includes('movie') ?
-            <div className='flex items-center'> 
+            <div className='flex items-center gap-2'> 
               <Link href={`/movie/editMovieUser/${id}`} className='bg-black text-white rounded-sm px-3 py-1'>
                 Edit
               </Link>
 
-              <Button className='bg-red-500 hover:bg-red-500 px-3 py-1 cursor-pointer'>
+              <Link href={`/movie/deleteMovieUser/${id}`}className='bg-red-500 text-white hover:bg-red-500 rounded-sm px-3 py-1 cursor-pointer'>
                 Delete
-              </Button>          
+              </Link>          
             </div> 
           : 
             <div>
@@ -55,16 +55,18 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
             </div>
           }
         </div>
+        
+        <div className='flex flex-col justify-between h-31'>
+          <h4 className="font-semibold line-clamp-5">
+            {overview}
+          </h4>
 
-        <h4 className="font-semibold h-16 line-clamp-3">
-          {overview}
-        </h4>
-
-        {!pathname.includes('movie') && (
-          <h1 className="font-semibold text-gray-500">
-            Added by : {creator?.name}
-          </h1>
-        )}        
+          {!pathname.includes('movie') && (
+            <h1 className="font-semibold text-gray-500">
+              Added by : {creator?.name}
+            </h1>
+          )}   
+        </div>     
       </CardContent>
     </Card>
   )

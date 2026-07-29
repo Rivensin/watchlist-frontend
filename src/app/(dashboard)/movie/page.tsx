@@ -33,7 +33,6 @@ export default function MoviesUser() {
 
   return (
     <main className="container mx-auto py-10">
-
       <div className="mb-4">
         <h1 className="text-3xl font-bold mb-6">
           Movie List
@@ -80,6 +79,7 @@ export default function MoviesUser() {
         {filterMovie?.map((movie : MovieProps) => (
           <div key={movie.id}>
             <MovieCard
+              id={movie.id}
               title={movie.title}
               overview={movie.overview}
               genres={movie.genres}

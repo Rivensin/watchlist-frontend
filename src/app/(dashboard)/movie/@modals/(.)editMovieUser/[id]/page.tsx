@@ -34,10 +34,11 @@ function EditMovieUser() {
 
   useEffect(() => {
     const MoviebyId = async() => {
-      const response =  await api.get(`movies/${params.id}`)
-
+      const response =  await api.get(`movies/${params.id}`)      
       reset(response.data)
     }
+
+    
 
     if(params.id) MoviebyId()
   },[params.id,reset])
@@ -46,28 +47,30 @@ function EditMovieUser() {
 
   const queryClient = useQueryClient();
 
-  const addMovieMutation = useMutation({
+  const editMovieMutation = useMutation({
     mutationFn: async (data: MovieFormData) => {
-    const response = await api.post("/movies/addMovie", data);
+      const response = await api.put(`/movies/${params.id}`, data);
 
-    return response.data;
+      return response.data
     },
 
-    onSuccess: () => {
-      toast.success("Movie added!");
+    onSuccess: async() => {
+      toast.success("Movie edited!");
 
-      queryClient.invalidateQueries({
-        queryKey: ["movies"],
+      await queryClient.invalidateQueries({
+        queryKey: ["moviesUser"],
       });
 
-      reset()
+      await queryClient.invalidateQueries({
+        queryKey: ["movies"],
+      });
 
       router.back();
     },
 
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error ?? "Failed to add movie");
+        toast.error(error.response?.data?.error ?? "Failed to edit movie");
       } else {
         toast.error("Something went wrong");
       }
@@ -75,7 +78,7 @@ function EditMovieUser() {
   });
 
   const onSubmit = (data: MovieFormData) => {
-    addMovieMutation.mutate(data);
+    editMovieMutation.mutate(data);
   };
 
   return (
@@ -83,9 +86,9 @@ function EditMovieUser() {
       <div        
         className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-11'>  
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
-          <div>Edits Movie</div>
+          <div>Edit Movie</div>
           <button onClick={() => router.back()}>
-            <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
+            <div className='hover:text-red-500 hover:border-b hover:border-red-500 h-9.5'>Close</div>
           </button>
         </div>
 
@@ -191,9 +194,9 @@ function EditMovieUser() {
           <Button
             className="w-full py-6 mt-5"
             type="submit"
-            disabled={addMovieMutation.isPending}
+            disabled={editMovieMutation.isPending}
           >
-            {addMovieMutation.isPending ? "Creating..." : "Create"}
+            {editMovieMutation.isPending ? "Editing..." : "Edit"}
           </Button>
         </form>
       </CardContent>

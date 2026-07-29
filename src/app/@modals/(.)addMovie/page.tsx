@@ -73,7 +73,7 @@ function AddMovie() {
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
           <div>Add Movie</div>
           <button onClick={() => router.back()}>
-            <div className='hover:border-b hover:border-gray-500 h-9.5'>Close</div>
+            <div className='hover:text-red-500 hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
         </div>
 
@@ -162,7 +162,7 @@ function AddMovie() {
 
           <div className="space-y-2">
             <Label htmlFor="posterUrl" className='text-2xl tracking-wide'>
-              Cover URL <span className='text-sm'> <span className='text-red-300'>*</span>Please provide amazon prime link </span>
+              Cover URL <span lassName='text-sm'> <span className='text-red-300'>*</span>Please provide amazon prime link </span>
             </Label>
 
             <Input
