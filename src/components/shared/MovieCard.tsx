@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creator } : MovieProps) {
   const pathname = usePathname()
-
+  
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow py-0 h-132">          
       <CardContent className="space-y-3 p-4">
@@ -49,9 +49,11 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
             </div> 
           : 
             <div>
-              <Button size="sm">
-                Add
-              </Button>
+              <Link href={`/addWatchlist/${id}`}>
+                <Button size="sm">
+                  Add
+                </Button>
+              </Link>
             </div>
           }
         </div>

@@ -184,6 +184,7 @@ function EditMovieUser() {
               {...register("posterUrl")}
               id="posterUrl"
               placeholder='Should be start with https://m.media-amazon.com/'
+              className='font-serif'
             />
 
             {errors.posterUrl && (

@@ -38,17 +38,27 @@ export default function MoviesUser() {
           Movie List
         </h1>
         <div className="flex items-center justify-between mb-1">
-          <div>
-            {profile && (
-              <>
-              <Link href='/' className='cursor-pointer'>
-                <Button size="sm" className="text-lg p-4 bg-orange-400">
-                  Movie
-                </Button>
-              </Link>
-              </>
-            )}            
-          </div>
+          {profile && (
+            <div className="flex gap-6">
+            <Link href='/addMovie' className='cursor-pointer'>
+              <Button size="sm" className="text-lg p-4">
+                Add Movie
+              </Button>
+            </Link>
+
+            <Link href='/' className='cursor-pointer'>
+              <Button size="sm" className="text-lg p-4 bg-orange-400">
+                ALL Movie 
+              </Button>
+            </Link>
+
+            <Link href='/watchlist' className='cursor-pointer'>
+              <Button size="sm" className="text-lg p-4 bg-orange-400">
+                My Watchlist
+              </Button>
+            </Link>
+            </div>
+          )}    
 
           <div className="flex items-center gap-10"> 
             <Input
@@ -74,7 +84,7 @@ export default function MoviesUser() {
           </div>
         </div>        
       </div>
-      
+
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {filterMovie?.map((movie : MovieProps) => (
           <div key={movie.id}>
