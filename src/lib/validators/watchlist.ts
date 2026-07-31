@@ -7,7 +7,7 @@ export const WatchlistSchema = z.object({
     "COMPLETED",
     "DROPPED",
   ]),
-  rating: z.number().int().min(0).max(10),
+  rating: z.number().int().min(1).max(10),
   notes: z.string().max(500).optional(),
 });
 

@@ -1,69 +1,72 @@
 'use client'
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Modals from '@/components/shared/Modals';
 import { CardContent } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { MovieFormData, MovieSchema } from '@/lib/validators/movie';
+import { WatchlistFormData, WatchlistSchema } from '@/lib/validators/watchlist';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useGetMovie from '@/hooks/useGetMovie';
 
-const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi","Thriller"]
+const status = ["PLANNED", "WATCHING", "COMPLETED", "DROPPED"]
 
 function AddWatchlist() {
   const router = useRouter()
 
-  const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
-    resolver: zodResolver(MovieSchema),
+  const params = useParams<{id: string}>()
+
+  const {data: movie } = useGetMovie(params.id)
+
+  const { register, handleSubmit, watch, reset, formState: { errors, isSubmitting }} = useForm<WatchlistFormData>({
+    resolver: zodResolver(WatchlistSchema),
     defaultValues: {
-      title: "",
-      overview: "",
-      releaseYear: new Date().getFullYear(),
-      genres: [],
-      posterUrl: "",
+      status: "PLANNED",
+      rating: 1,
+      notes: "",      
     },
   });
 
-  const overview = watch("overview")
+  const notes = watch('notes')
 
   const queryClient = useQueryClient();
 
-  const addMovieMutation = useMutation({
-    mutationFn: async (data: MovieFormData) => {
-    const response = await api.post("/movies/addMovie", data);
+  const addWatchlistMutation = useMutation({
+    mutationFn: async (data: WatchlistFormData) => {
+    const response = await api.post(`/watchlist/${params.id}`, data);
 
     return response.data;
     },
 
     onSuccess: () => {
-      toast.success("Movie added!");
+      toast.success("Movie added to watchlist!");
 
       queryClient.invalidateQueries({
-        queryKey: ["movies"],
+        queryKey: ["watchlist"],
       });
 
       reset()
 
-      router.back();
+      router.back()
     },
 
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error ?? "Failed to add movie");
+        toast.error(error.response?.data?.error ?? "Failed to add movie to watchlist");
       } else {
         toast.error("Something went wrong");
       }
     },
   });
 
-  const onSubmit = (data: MovieFormData) => {
-    addMovieMutation.mutate(data);
+  const onSubmit = (data: WatchlistFormData) => {
+    addWatchlistMutation.mutate(data); 
   };
 
   return (
@@ -71,7 +74,7 @@ function AddWatchlist() {
       <div        
         className='bg-white w-156 px-16 fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-fit pt-11 pb-11'>  
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
-          <div>Edit Watchlist</div>
+          <div>Add Watchlist</div>
           <button onClick={() => router.back()}>
             <div className='hover:text-red-500 hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
@@ -79,109 +82,92 @@ function AddWatchlist() {
 
         <CardContent>
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2 text-2xl tracking-wide text-center">
+            {movie?.title}
+          </div>
+
+          <div className='relative h-52'>
+            {movie && (
+              <Image 
+                src={movie.posterUrl} 
+                alt={movie.title} 
+                fill
+                priority
+                sizes='50vw'
+                className="object-cover" 
+              />            
+            )}
+            
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="title" className='text-2xl tracking-wide'>
-              Title
+            <Label htmlFor="rating" className='text-2xl tracking-wide'>
+              Status
             </Label>
 
-            <Input
-              {...register("title")}
-              id="title"
-              className='font-serif'
-            />
+            <select
+              {...register("status")}
+              id="status"
+              className='w-full rounded-md border border-gray-300 px-3 py-2 font-serif'
+            >
+              {status.map(status => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
 
-            {errors.title && (
-              <p className="text-sm text-red-500">{errors.title.message}</p>
+            {errors.status && (
+              <p className="text-sm text-red-500">{errors.status.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rating" className='text-2xl tracking-wide'>
+              Rating
+            </Label>
+
+            <select
+              {...register("rating", { valueAsNumber: true })}
+              id="rating"
+              className='w-full rounded-md border border-gray-300 px-3 py-2 font-serif'
+            >
+              {Array.from({ length: 10 }, (_, index) => (
+                <option key={index + 1} value={index + 1}>
+                  {index + 1}
+                </option>
+              ))}
+            </select>
+
+            {errors.rating && (
+              <p className="text-sm text-red-500">{errors.rating.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="overview" className='text-2xl tracking-wide'>
-              Overview <span className={` ${overview?.length === 500 || overview?.length < 1 ? 'text-red-300' : 'text-green-300'} `}>{overview?.length ?? 0} / 500 </span>
+              Notes <span className={` ${notes?.length === 500 || notes?.length < 1 ? 'text-red-300' : 'text-green-300'} `}>{notes?.length ?? 0} / 500 </span>
             </Label>
 
             <Textarea
-              {...register("overview")}
-              id="overview"
-              rows={10}
-              className='font-serif overflow-y-auto h-32'
+              {...register("notes")}
+              id="notes"
+              rows={5}
+              className='font-serif overflow-y-auto h-24'
               maxLength={500}
             />
 
-            {errors.overview && (
-              <p className="text-sm text-red-500">{errors.overview.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="releaseYear" className='text-2xl tracking-wide'>
-              Release Year
-            </Label>
-
-            <Input
-              {...register("releaseYear",{
-                valueAsNumber: true
-              })}
-              id="releaseYear"
-              type='number'
-            />
-
-            {errors.releaseYear && (
-              <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="genres" className='text-2xl tracking-wide'>
-              Genres
-            </Label>
-
-            <div className='grid grid-cols-3 gap-2'>
-              {genres.map(genre => (
-                <div key={genre} className='flex'>
-                  <Label htmlFor="genres" className='w-15'>
-                    {genre}
-                  </Label>
-                  
-                  <Input
-                    {...register("genres")}
-                    id="genres"
-                    value={genre}
-                    type='checkbox'
-                    className='w-22.5'
-                  />    
-                </div>            
-              ))}
-              
-            </div>
-
-            {errors.genres && (
-              <p className="text-sm text-red-500">{errors.genres.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="posterUrl" className='text-2xl tracking-wide'>
-              Cover URL <span className='text-sm'> <span className='text-red-300'>*</span>Please provide amazon prime link </span>
-            </Label>
-
-            <Input
-              {...register("posterUrl")}
-              id="posterUrl"
-              placeholder='Should be start with https://m.media-amazon.com/'
-            />
-
-            {errors.posterUrl && (
-              <p className="text-sm text-red-500">{errors.posterUrl.message}</p>
+            {errors.notes && (
+              <p className="text-sm text-red-500">{errors.notes.message}</p>
             )}
           </div>
 
           <Button
             className="w-full py-6 mt-5"
             type="submit"
-            disabled={addMovieMutation.isPending}
+            disabled={addWatchlistMutation.isPending}
           >
-            {addMovieMutation.isPending ? "Creating..." : "Create"}
+            {addWatchlistMutation.isPending ? "Adding..." : "Add"}
           </Button>
         </form>
       </CardContent>
