@@ -1,11 +1,12 @@
-import { MovieProps } from "./movie"
-
 export type WatchlistProps = {
   id?: string
-  userId: string
-  movieId: string
-  status: string
+  status: "PLANNED" | "WATCHING" | "COMPLETED" | "DROPPED";
   rating: number
-  notes: string
-  movie: MovieProps  
+  notes: string | null
+  createdAt: string
+  movie: {
+    id: string,
+    title: string
+    posterUrl: string
+  }
 }

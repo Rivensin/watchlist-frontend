@@ -1,28 +1,27 @@
 'use client'
 import Link from "next/link"
-import MovieCard from "@/components/shared/MovieCard"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
-import { MovieProps } from "@/app/types/movie"
 import { Button } from "@/components/ui/button"
-import { useMemo } from "react"
 import useProfile from "@/hooks/useProfile"
 import useLogout from "@/hooks/useLogout"
 import useWatchlist from "@/hooks/useWatchlist"
-import useMovieUser from "@/hooks/useMovieUser"
+import { useMemo } from "react"
+import { WatchlistProps } from "@/app/types/watchlist"
+import WatchlistCard from "@/components/shared/WatchlistCard"
 
-export default function MoviesUser() {
-  const { data: watchlist, isLoading, error  } = useWatchlist()
+export default function Watchlist() {
+  const { data: watchlist, isLoading, error } = useWatchlist()
 
   const { data: profile } = useProfile()
 
   const [search, setSearch] = useState<string>('')
 
-  // const filterMovie = useMemo(() => {
-  //   return movies?.filter((movie: MovieProps) =>
-  //     movie.title.toLowerCase().includes(search.toLowerCase())
-  //   );
-  // }, [movies, search]);
+  const filterMovie = useMemo(() => {
+    return watchlist?.filter((watchlist : WatchlistProps) =>
+      watchlist.movie.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [watchlist, search]);
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -52,8 +51,6 @@ export default function MoviesUser() {
                 My Movie List
               </Button>
             </Link>
-
-            
             </div>
           )}    
 
@@ -82,28 +79,34 @@ export default function MoviesUser() {
         </div>        
       </div>
 
-      {watchlist?.length === 0 && (        
-        <div className="flex flex-col justify-center items-center h-screen text-2xl gap-10">
-          <div>There is no Watchlist for now</div>
-          <div>Lets start Watching!</div>
-        </div>
-      )}
+      {watchlist?.length === 0 
+        ? 
+          (        
+            <div className="flex flex-col justify-center items-center h-screen text-2xl gap-10">
+              <div>There is no Watchlist for now</div>
+              <div>Lets start Watching!</div>
+            </div>
+          ) 
+        : 
+          (
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              {filterMovie?.map((watchlist : WatchlistProps) => (
+                <div key={watchlist.id}>
+                  <WatchlistCard
+                    id = {watchlist.id} 
+                    status = {watchlist.status} 
+                    rating = {watchlist.rating} 
+                    notes = {watchlist.notes} 
+                    createdAt = {watchlist.createdAt} 
+                    movie = {watchlist.movie} 
+                  />
+                </div>
+              ))}
+            </div>
+          )
+      }
 
-      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        {/* {filterMovie?.map((movie : MovieProps) => (
-          <div key={movie.id}>
-            <MovieCard
-              id={movie.id}
-              title={movie.title}
-              overview={movie.overview}
-              genres={movie.genres}
-              releaseYear={movie.releaseYear}
-              posterUrl={movie.posterUrl}
-              creator={movie.creator}
-            />
-          </div>
-        ))} */}
-      </div>
+      
 
     </main>
   )

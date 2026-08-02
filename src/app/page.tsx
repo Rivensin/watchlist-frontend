@@ -9,11 +9,6 @@ import { useMemo } from "react"
 import useLogout from "@/hooks/useLogout"
 import useProfile from "@/hooks/useProfile"
 import useMovie from "@/hooks/useMovie"
-import { useQueryClient } from "@tanstack/react-query"
-import { useMutation } from "@tanstack/react-query"
-import { toast } from 'sonner'
-import api from "@/lib/axios"
-import axios from "axios"
 
 export default function Movies() {
   const { data: movies, isLoading, error } = useMovie()
@@ -28,37 +23,6 @@ export default function Movies() {
       movie.title.toLowerCase().includes(search.toLowerCase())
     );
   }, [movies, search])
-
-  //Handle add watchlist to Watchlist
-  const queryClient = useQueryClient();
-
-  const addWatchlistMutation = useMutation({
-    mutationFn: async (data: any) => {
-    const response = await api.post("/movies/addMovie", data);
-
-    return response.data;
-    },
-
-    onSuccess: () => {
-      toast.success("Movie added to Watchlist!");
-
-      queryClient.invalidateQueries({
-        queryKey: ["watchlist"],
-      });
-    },
-
-    onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error ?? "Failed to add movie");
-      } else {
-        toast.error("Something went wrong");
-      }
-    },
-  });
-
-  const onSubmit = (data: any) => {
-    addWatchlistMutation.mutate(data);
-  };
 
   if (isLoading) {
     return <p>Loading...</p>;

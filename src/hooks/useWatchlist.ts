@@ -6,7 +6,7 @@ function useWatchlist() {
   return useQuery<WatchlistProps[]>({
     queryKey: ["watchlist"],
     queryFn: async () => {
-      const response = await api.get("/watchlist/getWatchlist");
+      const response = await api.get("/watchlist");
       
       return response.data;
     },
