@@ -35,6 +35,7 @@ export default function LoginForm() {
     },
       
     onSuccess: () => {
+      console.log("THIS IS NEW CODE");
       toast.success("Logged in successfully!");
       reset()
       router.push('/')
