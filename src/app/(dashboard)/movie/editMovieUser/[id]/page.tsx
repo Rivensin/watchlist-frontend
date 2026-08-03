@@ -38,8 +38,6 @@ function EditMovieUser() {
       reset(response.data)
     }
 
-    
-
     if(params.id) MoviebyId()
   },[params.id,reset])
 

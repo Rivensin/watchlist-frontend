@@ -40,7 +40,7 @@ export default function Movies() {
         <h1 className="text-3xl font-bold mb-6">
           Movie List
         </h1>
-        <div className="flex items-center justify-between mb-1">
+        <div className={`flex items-center ${profile ? 'justify-between' : 'justify-end' }  mb-1`}>
           {profile && (
             <div className="flex gap-6">              
               <Link href='/movie' className='cursor-pointer'>
@@ -68,7 +68,7 @@ export default function Movies() {
               {profile ? (
                 <div className="flex gap-10">
                 <div>Welcome, <span className="text-blue-500">{profile.name}</span>!</div>
-                <button onClick={logout} className="hover:underline hover:text-red-400 hover:cursor-pointer">
+                <button onClick={() => logout.mutate()} className="hover:underline hover:text-red-400 hover:cursor-pointer">
                   Logout
                 </button>
                 </div>

@@ -73,7 +73,7 @@ export default function MoviesUser() {
               {profile ? (
                 <div className="flex gap-10">
                 <div>Welcome, <span className="text-blue-500">{profile.name}</span>!</div>
-                <button onClick={logout} className="hover:underline hover:text-red-400 hover:cursor-pointer">
+                <button onClick={() => logout.mutate()} className="hover:underline hover:text-red-400 hover:cursor-pointer">
                   Logout
                 </button>
                 </div>
