@@ -24,7 +24,7 @@ function EditWatchlist() {
 
   const [movie, setMovie] = useState({title: '', posterUrl: ''})
 
-  const { register, handleSubmit, watch, reset, formState: { errors, isSubmitting }} = useForm<WatchlistFormData>({
+  const { register, handleSubmit, watch, reset, formState: { errors }} = useForm<WatchlistFormData>({
     resolver: zodResolver(WatchlistSchema),
     defaultValues: {
       status: "PLANNED",

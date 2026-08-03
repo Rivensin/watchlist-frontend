@@ -14,12 +14,13 @@ import { toast } from "sonner";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
@@ -27,26 +28,30 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
+  const loginMutation = useMutation({
+    mutationFn: async(data: LoginFormData) => {
       const response = await api.post("/auth/login", data);
-
-      toast.success("Logged in successfully!", {
-        description: "Welcome to Watchlist",
-      })
-
+      return response.data;
+    },
+      
+    onSuccess: () => {
+      toast.success("Logged in successfully!");
+      reset()
       router.push('/')
+    },
 
-    } catch (error) {
-      if(axios.isAxiosError(error)){
-        toast.error("Login failed", {
-          description: error.response?.data?.error || "Something went wrong",
-        })
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error ?? "Login Failed");
       } else {
-        toast.error('something went wrong')
+        toast.error("Something went wrong");
       }
-    }
-  };
+    },
+  })
+
+  const onSubmit = (data: LoginFormData) => {
+    loginMutation.mutate(data)
+  }
 
   return (
     <Card className="w-full max-w-107.5 shadow-xl">
@@ -122,14 +127,14 @@ export default function LoginForm() {
           <Button
             className="w-full"
             type="submit"
-            disabled={isSubmitting}
+            disabled={loginMutation.isPending}
           >
             Sign In
           </Button>
 
           <div className="text-center text-sm">
 
-            Don't have an account?{" "}
+            Dont have an account?{" "}
 
             <Link
               href="/register"

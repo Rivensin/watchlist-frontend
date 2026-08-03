@@ -13,9 +13,13 @@ import { useForm } from "react-hook-form";
 import { RegisterFormData, RegisterSchema } from "@/lib/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
+  const router = useRouter()
+
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       name: "",
@@ -25,16 +29,19 @@ export default function RegisterForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = async (data: RegisterFormData) => {
-    try {
+  const registerMutation = useMutation({
+    mutationFn: async(data: RegisterFormData) => {
       const response = await api.post("/auth/register", data);
-
+      return response.data;
+    },
+    onSuccess: () => {
       toast.success("Account created successfully!", {
         description: "Welcome to Watchlist",
       })
-
       reset()
-    } catch (error) {
+      router.push('/login')
+    },
+    onError: (error) => {
       if(axios.isAxiosError(error)){
         toast.error("Registration failed", {
           description: error.response?.data?.error || "Something went wrong",
@@ -42,8 +49,12 @@ export default function RegisterForm() {
       } else {
         toast.error('something went wrong')
       }
-    }
-  };
+    },
+  })
+
+  const onSubmit = async (data: RegisterFormData) => {
+    registerMutation.mutate(data)
+  }
 
   return (
     <Card className="w-full max-w-107.5 shadow-xl">
@@ -132,7 +143,7 @@ export default function RegisterForm() {
           <Button
             className="w-full"
             type="submit"
-            disabled={isSubmitting}
+            disabled={registerMutation.isPending}
           >
             Create Account
           </Button>

@@ -19,7 +19,7 @@ const genres = ["Action","Adventure","Comedy","Drama","Fantasy","Horror","Sci-Fi
 function AddMovie() {
   const router = useRouter()
 
-  const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting }} = useForm<MovieFormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors }} = useForm<MovieFormData>({
     resolver: zodResolver(MovieSchema),
     defaultValues: {
       title: "",
