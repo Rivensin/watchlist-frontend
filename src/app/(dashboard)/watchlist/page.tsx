@@ -15,6 +15,8 @@ export default function Watchlist() {
 
   const { data: profile } = useProfile()
 
+  const logout = useLogout()
+
   const [search, setSearch] = useState<string>('')
 
   const filterMovie = useMemo(() => {
@@ -65,7 +67,7 @@ export default function Watchlist() {
               {profile ? (
                 <div className="flex gap-10">
                 <div>Welcome, <span className="text-blue-500">{profile.name}</span>!</div>
-                <button onClick={useLogout} className="hover:underline hover:text-red-400 hover:cursor-pointer">
+                <button onClick={logout} className="hover:underline hover:text-red-400 hover:cursor-pointer">
                   Logout
                 </button>
                 </div>
