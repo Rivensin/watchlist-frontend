@@ -33,9 +33,9 @@ export default function MoviesUser() {
 
   return (
     <main className="container mx-auto py-10">
-      <div className="mb-4">
+      <div className="mb-4">        
         <h1 className="text-3xl font-bold mb-6">
-          Movie List
+          <Link href='/'>Movie List</Link>
         </h1>
         <div className="flex items-center justify-between mb-1">
           {profile && (

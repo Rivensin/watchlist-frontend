@@ -32,7 +32,7 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
           </p>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-10">
           <span className="text-sm font-medium">
             Genre : {genres.map(genre => genre).join(', ')}
           </span>
@@ -58,8 +58,8 @@ function MovieCard({ id, title, overview, genres, releaseYear, posterUrl, creato
           }
         </div>
         
-        <div className='flex flex-col justify-between h-31'>
-          <h4 className="font-semibold line-clamp-5">
+        <div className='flex flex-col justify-between h-29 pb-2'>
+          <h4 className="font-semibold line-clamp-4">
             {overview}
           </h4>
 

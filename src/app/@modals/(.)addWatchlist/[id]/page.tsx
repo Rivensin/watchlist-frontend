@@ -61,7 +61,12 @@ function AddWatchlist() {
         toast.error(error.response?.data?.error ?? "Failed to add movie to watchlist");
       } else {
         toast.error("Something went wrong");
-      }
+      }       
+       router.back();
+
+      setTimeout(() => {
+        router.replace("/watchlist");
+      }, 50);
     },
   });
 

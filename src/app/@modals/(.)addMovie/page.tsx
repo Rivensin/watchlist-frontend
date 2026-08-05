@@ -48,6 +48,10 @@ function AddMovie() {
         queryKey: ["movies"],
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["moviesUser"],
+      });
+
       reset()
 
       router.back();
@@ -55,7 +59,7 @@ function AddMovie() {
 
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error ?? "Failed to add movie");
+        toast.error(error.response?.data?.error ?? "Failed to add movie"); 
       } else {
         toast.error("Something went wrong");
       }

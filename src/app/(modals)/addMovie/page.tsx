@@ -48,6 +48,10 @@ function AddMovie() {
         queryKey: ["movies"],
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["moviesUser"],
+      });
+
       reset()
 
       router.back();
@@ -73,7 +77,7 @@ function AddMovie() {
         <div className='flex justify-between items-center font-cormorant text-3xl md:text-2xl 2xl:text-3xl pb-12'>
           <div>Add Movie</div>
           <button onClick={() => router.back()}>
-            <div className='hover:text-red-500 hover:border-b hover:border-red-500 h-9.5'>Close</div>
+            <div className='hover:text-red-500 hover:border-b hover:border-gray-500 h-9.5'>Close</div>
           </button>
         </div>
 

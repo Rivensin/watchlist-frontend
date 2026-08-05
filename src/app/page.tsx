@@ -36,7 +36,9 @@ export default function Movies() {
     <main className="container mx-auto py-10">
       <div className="mb-4">
         <h1 className="text-3xl font-bold mb-6">
-          Movie List
+          <h1 className="text-3xl font-bold mb-6">
+          <Link href='/'>Movie List</Link>
+        </h1>
         </h1>
         <div className={`flex items-center ${profile ? 'justify-between' : 'justify-end' }  mb-1`}>
           {profile && (
