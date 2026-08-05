@@ -9,6 +9,8 @@ import { useMemo } from "react"
 import useMovieUser from "@/hooks/useMovieUser"
 import useProfile from "@/hooks/useProfile"
 import useLogout from "@/hooks/useLogout"
+import MovieSkeleton from "@/components/shared/MovieSkeleton"
+import ErrorSkeleton from "@/components/shared/ErrorSkeleton"
 
 export default function MoviesUser() {
   const { data: movies, isLoading, error } = useMovieUser()
@@ -25,13 +27,9 @@ export default function MoviesUser() {
     );
   }, [movies, search]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Something went wrong.</p>;
-  }
+  if (isLoading) return <MovieSkeleton />
+    
+  if (error) return <ErrorSkeleton />
 
   return (
     <main className="container mx-auto py-10">

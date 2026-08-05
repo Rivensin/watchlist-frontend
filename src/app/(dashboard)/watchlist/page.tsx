@@ -9,6 +9,8 @@ import useWatchlist from "@/hooks/useWatchlist"
 import { useMemo } from "react"
 import { WatchlistProps } from "@/app/types/watchlist"
 import WatchlistCard from "@/components/shared/WatchlistCard"
+import MovieSkeleton from "@/components/shared/MovieSkeleton"
+import ErrorSkeleton from "@/components/shared/ErrorSkeleton"
 
 export default function Watchlist() {
   const { data: watchlist, isLoading, error } = useWatchlist()
@@ -25,13 +27,9 @@ export default function Watchlist() {
     );
   }, [watchlist, search]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Something went wrong.</p>;
-  }
+  if (isLoading) return <MovieSkeleton />
+    
+  if (error) return <ErrorSkeleton />
 
   return (
     <main className="container mx-auto py-10">   
