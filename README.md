@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 Movie Watchlist App
 
-## Getting Started
+A full-stack movie watchlist application built with **Next.js App Router**, **Express.js**, **Prisma ORM**, and **PostgreSQL**. Users can securely manage personal watchlists through JWT authentication and a modern responsive interface.
 
-First, run the development server:
+## 🚀 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Frontend: https://watchlistmovieapp.vercel.app/
+- Backend API: https://github.com/Rivensin/backend
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- JWT Authentication (Login & Register)
+- Create, update, and delete watchlists
+- Add, edit, and remove movies
+- Responsive UI
+- Intercepting Routes & Parallel Routes
+- Form validation with React Hook Form + Zod
+- Data fetching with TanStack Query
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+### Frontend
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- TanStack Query
+- React Hook Form
+- Zod
+- Axios
 
-To learn more about Next.js, take a look at the following resources:
+### Backend
+- Express.js
+- Prisma ORM
+- PostgreSQL
+- JWT
+- bcrypt
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📚 What I Learned
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Building scalable applications with Next.js App Router
+- Designing RESTful APIs using Express.js
+- Managing relational databases with Prisma ORM & PostgreSQL
+- Implementing JWT authentication
+- Using TanStack Query for efficient server state management
+- Creating type-safe forms with React Hook Form and Zod
 
-## Deploy on Vercel
+## 👤 Author
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Rivensin**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Portfolio: https://rivensin.github.io/Rivensin-Portofolio/
+
+LinkedIn: https://linkedin.com/in/rivensin
